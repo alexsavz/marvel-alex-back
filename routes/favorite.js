@@ -83,7 +83,6 @@ router.get("/list", async (req, res) => {
     try {
         const user = await User.findOne({token : req.fields.user});
         const findFavorite = await Favorite.findOne({id: req.fields.id, user: user._id }).populate("user");
-        console.log(findFavorite);
         
         await findFavorite.deleteOne();
     } catch (error) {
