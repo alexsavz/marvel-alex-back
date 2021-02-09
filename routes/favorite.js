@@ -19,7 +19,7 @@ router.post("/createfav", async (req, res) => {
         const isFavorite = findFavorite.filter( (favorite) => {
             return favorite.user.email === isUser.email;
         });
-        console.log(isFavorite);
+        // console.log(isFavorite);
 
         if(isFavorite.length >= 1){
             res.status(409).json({message : "This comics or character is already in your favorites"})
