@@ -12,12 +12,12 @@ router.post("/createfav", async (req, res) => {
     try {
 
         // Check if the comics or character is already in the favorite list of the user
-        const IsUser = await User.findOne({token : req.fields.user});
-        const FindFavorite = await Favorite.find({title: req.fields.title, user: IsUser._id }).populate("user");
+        const isUser = await User.findOne({token : req.fields.user});
+        const findFavorite = await Favorite.find({title: req.fields.title, user: isUser._id }).populate("user");
         // console.log(FindFavorite);
         
-        const isFavorite = FindFavorite.filter( (favorite) => {
-            return favorite.user.email === IsUser.email;
+        const isFavorite = findFavorite.filter( (favorite) => {
+            return favorite.user.email === isUser.email;
         });
         console.log(isFavorite);
 
@@ -57,8 +57,8 @@ router.get("/list", async (req, res) => {
           const connectedUser = await User.findOne({token : token});
 
             if(connectedUser){
-              const Favorites = await Favorite.find({user : connectedUser._id});
-              res.json(Favorites);
+              const favorites = await Favorite.find({user : connectedUser._id});
+              res.json(favorites);
             }
             else{
               return res.status(401).json({
@@ -76,4 +76,18 @@ router.get("/list", async (req, res) => {
     }
   });
 
+  // Delete a specific user favorite 
+  router.post("/deletefav", async (req, res) => {
+    console.log("route : /deletefav"); 
+
+    try {
+        const user = await User.findOne({token : req.fields.user});
+        const findFavorite = await Favorite.findOne({id: req.fields.id, user: user._id }).populate("user");
+        console.log(findFavorite);
+        
+        await findFavorite.deleteOne();
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  })
 module.exports = router;
