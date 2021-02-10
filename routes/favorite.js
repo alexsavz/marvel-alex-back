@@ -15,11 +15,12 @@ router.post("/createfav", async (req, res) => {
         const isUser = await User.findOne({token : req.fields.user});
         const findFavorite = await Favorite.find({title: req.fields.title, user: isUser._id }).populate("user");
         // console.log(FindFavorite);
+        console.log(isUser);
         
         const isFavorite = findFavorite.filter( (favorite) => {
             return favorite.user.email === isUser.email;
         });
-        // console.log(isFavorite);
+        console.log(isFavorite);
 
         if(isFavorite.length >= 1){
             res.status(409).json({message : "This comics or character is already in your favorites"})
@@ -32,7 +33,7 @@ router.post("/createfav", async (req, res) => {
                     title: req.fields.title,
                     description: req.fields.description,
                     url: req.fields.url,
-                    user: IsUser
+                    user: isUser
                     });
             
                     await newFavorite.save();
@@ -83,8 +84,9 @@ router.get("/list", async (req, res) => {
     try {
         const user = await User.findOne({token : req.fields.user});
         const findFavorite = await Favorite.findOne({id: req.fields.id, user: user._id }).populate("user");
-        
+
         await findFavorite.deleteOne();
+        res.status(200).json("Offer deleted succesfully !");
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
